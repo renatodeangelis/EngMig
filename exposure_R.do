@@ -912,12 +912,69 @@ gen check=substr(geo,6,10)
 drop if check==""
 drop year check
 
+forval nmiss = 3/10 {  // Loop through 3 to 10 missing years
+    bysort geo: gen nobs = _n
+    bysort geo: gen nobs_tot = _N
+    count
+    local to_expand = `nmiss' - (8 - r(N))
+
+    if `to_expand' > 0 {
+        expand `to_expand' if nobs == 8 & nobs_tot == 8
+        gen obs = _n
+        replace year = . if obs > r(N)
+        replace hrs_exp = . if obs > r(N)
+
+        sort geo year
+        bysort geo: gen count_obs = _n + 1996
+        gen diff_year = count_obs if year != count_obs
+        bysort geo: egen year1997 = sum(diff_year)
+        bysort geo: egen y1997 = sum(year1997)
+        replace diff_year = . if year >= 1998 & y1997 == 1
+        replace year = 1997 if count_obs == 2005 & year == . & y1997 == 1
+        drop year1997 y1997
+
+        replace diff_year = 0 if diff_year == .
+        replace diff_year = diff_year - year[_n-1] if diff_year != 0
+        replace diff_year = . if diff_year != 1
+        replace diff_year = count_obs if diff_year == 1
+        bysort geo: egen replace_year = sum(diff_year)
+        replace year = replace_year if count_obs == 2005 & year == .
+        drop count_obs diff_year replace_year
+
+        // ... Repeat the steps for each missing year
+    }
+}
+
+sort geo year
+keep geo year hrs_exp
+
 save "$base\exposure_loc.dta", replace
 *========================================================================* 
 use "$base\exposure_loc.dta", clear
 sort geo cohort
 gen state=substr(geo,1,2)
 gen hrs_exp0=hrs_exp
+
+* Calculate linear interpolation 'lin_eng' and growth rate 'gr_eng'
+gen lin_eng = 0
+
+bysort geo cohort (cohort): egen min_cohort = min(cohort)
+bysort geo cohort (cohort): egen max_cohort = max(cohort)
+
+forval year = `min_cohort' / (`max_cohort' - 1) {
+    replace lin_eng = lin_eng[_n - 1] + gr_eng[_n] if cohort == `year' & cohort != `year' + 1 & cohort != `year' - 1
+}
+
+bysort geo cohort: replace hrs_exp = lin_eng if hrs_exp == . & lin_eng != .
+
+* Identify and handle successive years with 0 hours of English
+gen zero_exp = (hrs_exp == 0 & hrs_exp[_n - 1] == 0)
+
+forval i = 1/2 {
+    replace hrs_exp = 0 if zero_exp & hrs_exp[_n - `i'] == 0
+}
+
+drop zero_exp
 
 /*
 bysort geo: egen min_eng=min(hrs_exp)
