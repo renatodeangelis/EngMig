@@ -910,41 +910,26 @@ sort geo year
 gen cohort=year-11
 gen check=substr(geo,6,10)
 drop if check==""
-drop year check
+drop check
 
 save "$base\exposure_loc.dta", replace
 *========================================================================* 
 use "$base\exposure_loc.dta", clear
-sort geo cohort
+sort geo year
 gen state=substr(geo,1,2)
 gen hrs_exp0=hrs_exp
 
-/*
-bysort geo: egen min_eng=min(hrs_exp)
-bysort geo: egen max_eng=max(hrs_exp)
-bysort geo: egen mean_eng=mean(hrs_exp) if hrs_exp!=0
-bysort geo: egen tot_eng=total(hrs_exp)
-bysort geo: gen nz_obs=tot_eng/mean_eng
-bysort geo: gen gr_eng=max_eng/nz_obs
-
-bysort geo: gen lin_eng=0 if hrs_exp==0
-bysort geo: replace lin_eng=lin_eng[_n-1]+gr_eng[_n] if missing(lin_eng)
-
-bysort geo: replace hrs_exp=lin_eng if hrs_exp[_n-1]>hrs_exp[_n] & hrs_exp[_n+1]>hrs_exp[_n] & (lin_eng[_n]>hrs_exp[_n] | missing(hrs_exp)) & lin_eng[_n]!=. & lin_eng[_n]!=0
-bysort geo: replace hrs_exp=lin_eng+gr_eng if hrs_exp[_n]==lin_eng[_n] & gr_eng[_n]!=. & cohort==1996
-
-bysort geo: replace gr_eng=gr_eng[_n-1] if gr_eng[_n-1]>0 & gr_eng[_n-1]!=. & missing(gr_eng)
-replace hrs_exp=0 if hrs_exp==. & gr_eng==.
-
-foreach x in 1986 1985 1984 1983 1982 1981 1980 1979{
-bysort geo: replace hrs_exp=hrs_exp[_n+1]-gr_eng[_n]/4 if hrs_exp[_n]==. & cohort==`x'
+forval i = 1/17 {
+    gen next_year_hrs_exp = hrs_exp[_n+1]
+    replace hrs_exp = 0 if next_year_hrs_exp == 0 & !missing(next_year_hrs_exp) & year < year[_n+1]
+    drop next_year_hrs_exp
 }
 
-replace hrs_exp=0 if hrs_exp<0 & hrs_exp!=.
-*/
+gen interpolated_hrs_exp = (hrs_exp[_n-1] + hrs_exp[_n+1])/2
 
+replace hrs_exp = interpolated_hrs_exp if missing(hrs_exp) & !missing(hrs_exp[_n-1]) & !missing(hrs_exp[_n+1]) & year > year[_n-1] & year < year[_n+1]
 
-*replace hrs_exp=0 if hrs_exp==.
+drop interpolated_hrs_exp
 
 bysort state cohort: egen hrs_eng=mean(hrs_exp)
 label var hrs_eng "Extrapolated"
