@@ -104,6 +104,7 @@ replace had_policy=1 if state=="19" & (cohort>=1987 & cohort<=1996) & engl==1
 replace had_policy=1 if state=="25" & (cohort>=1993 & cohort<=1996) & engl==1
 replace had_policy=1 if state=="26" & (cohort>=1993 & cohort<=1996) & engl==1
 replace had_policy=1 if state=="28" & (cohort>=1990 & cohort<=1996) & engl==1
+keep if cohort>=1975 & cohort<=1996
 
 gen delayed_uptake=0
 replace delayed_uptake=1 if state=="01" & cohort==1990 & engl == 0
@@ -114,11 +115,9 @@ replace delayed_uptake=1 if state=="25" & cohort==1993 & engl == 0
 replace delayed_uptake=1 if state=="26" & cohort==1993 & engl == 0
 replace delayed_uptake=1 if state=="28" & cohort==1990 & engl == 0
 
-gen delayed_uptake_loc = 0
-replace delayed_uptake_loc = 1 if delayed_uptake == 1
-egen any_delayed_uptake = max(delayed_uptake_loc), by(geo)
+egen any_delayed_uptake = max(delayed_uptake), by(geo)
 bysort geo (any_delayed_uptake): drop if any_delayed_uptake[1] == 1
-drop delayed_uptake delayed_uptake_loc any_delayed_uptake
+drop delayed_uptake, any_delayed_uptake
 
 eststo clear
 eststo: areg hrs_exp had_policy i.cohort i.edu female indigenous married ///
