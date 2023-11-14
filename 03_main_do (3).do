@@ -100,7 +100,9 @@ replace min_cohort = 1993 if state == "25"
 replace min_cohort = 1993 if state == "26"
 replace min_cohort = 1990 if state == "28"
 
-bysort geo: egen min_locality_cohort = min(cohort) if engl == 1 & cohort >= min_cohort
+bysort geo: egen min_locality_cohort = min(cohort) if engl == 1 & cohort >= min_cohort ///
+& (state=="01" | state=="05" | state=="10" | state=="19" | state=="25" ///
+| state=="26" | state=="28")
 
 replace first_cohort = max(min_locality_cohort, min_cohort)
 
@@ -293,65 +295,26 @@ graphregion(color(white) margin()) cols(2) imargin(1 1.2 1.2 1) scale(0.9)
 graph export "$doc\fig_edu_enroll.png", replace
 
 *========================================================================*
-/* TABLE 5. Returns to English abilities (IV estimate) */
-*========================================================================*
-use "$data/eng_abil.dta", clear
-keep if biare==1
-keep if state=="01" | state=="05" | state=="10" ///
-| state=="19" | state=="25" | state=="26" | state=="28" ///
-| state=="02" | state=="03" | state=="08" | state=="18" ///
-| state=="14" | state=="24" | state=="32" | state=="06" | state=="11"
-
-gen had_policy=0 
-replace had_policy=1 if state=="01" & (cohort>=1990 & cohort<=1995)
-replace had_policy=1 if state=="05" & (cohort>=1988 & cohort<=1996)
-replace had_policy=1 if state=="10" & (cohort>=1991 & cohort<=1996)
-replace had_policy=1 if state=="19" & (cohort>=1987 & cohort<=1996)
-replace had_policy=1 if state=="25" & (cohort>=1993 & cohort<=1996)
-replace had_policy=1 if state=="26" & (cohort>=1993 & cohort<=1996)
-replace had_policy=1 if state=="28" & (cohort>=1990 & cohort<=1996)
-destring state, replace
-destring geo, replace
-keep if cohort>=1975 & cohort<=1996
-
-eststo clear
-* Structural equation
-eststo: areg lwage eng i.cohort i.edu female rural indigenous married ///
-[aw=weight] if had_policy!=. & paidw==1, absorb(geo) vce(cluster geo)
-* First stage equation
-eststo: areg eng had_policy i.cohort i.edu female rural indigenous married ///
-[aw=weight] if had_policy!=. & paidw==1, absorb(geo) vce(cluster geo)
-* Reduced form equation
-eststo: areg lwage had_policy i.cohort i.edu female rural indigenous married ///
-[aw=weight] if had_policy!=. & paidw==1, absorb(geo) vce(cluster geo)
-* Second stage (IV)
-eststo: quietly ivregress 2sls lwage (eng=had_policy) i.geo i.cohort i.edu ///
-female rural indigenous married [aw=weight] if had_policy!=. & paidw==1, vce(cluster geo)
-esttab using "$doc\tabIV.tex", cells(b(star fmt(%9.3f)) se(par)) ///
-star(* 0.10 ** 0.05 *** 0.01) title(English abilities) keep(eng had_policy) ///
-stats(N ar2 F, fmt(%9.0fc %9.3f)) replace
-
-*========================================================================*
 /* APPENDIX */
 *========================================================================*
 /* FIGURE A.5. Pre-trends test pooling all states (SDD estimate) */
 *========================================================================*
 use "$data/eng_abil.dta", clear
 keep if biare==1
-gen engl=hrs_exp>=0.3
+gen engl=hrs_exp>=0.1
 keep if state=="01" | state=="05" | state=="10" ///
 | state=="19" | state=="25" | state=="26" | state=="28" ///
 | state=="02" | state=="03" | state=="08" | state=="18" ///
 | state=="14" | state=="24" | state=="32" | state=="06" | state=="11"
 
 gen had_policy=0 
-replace had_policy=1 if state=="01" & (cohort>=1990 & cohort<=1995)
-replace had_policy=1 if state=="05" & (cohort>=1988 & cohort<=1996)
-replace had_policy=1 if state=="10" & (cohort>=1991 & cohort<=1996)
-replace had_policy=1 if state=="19" & (cohort>=1987 & cohort<=1996)
-replace had_policy=1 if state=="25" & (cohort>=1993 & cohort<=1996)
-replace had_policy=1 if state=="26" & (cohort>=1993 & cohort<=1996)
-replace had_policy=1 if state=="28" & (cohort>=1990 & cohort<=1996)
+replace had_policy=1 if state=="01" & (cohort>=1990 & cohort<=1995) & engl==1
+replace had_policy=1 if state=="05" & (cohort>=1988 & cohort<=1996) & engl==1
+replace had_policy=1 if state=="10" & (cohort>=1991 & cohort<=1996) & engl==1
+replace had_policy=1 if state=="19" & (cohort>=1987 & cohort<=1996) & engl==1
+replace had_policy=1 if state=="25" & (cohort>=1993 & cohort<=1996) & engl==1
+replace had_policy=1 if state=="26" & (cohort>=1993 & cohort<=1996) & engl==1
+replace had_policy=1 if state=="28" & (cohort>=1990 & cohort<=1996) & engl==1
 keep if cohort>=1975 & cohort<=1996
 
 /*destring state, replace
