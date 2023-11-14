@@ -87,15 +87,23 @@ stats(N ar2, fmt(%9.0fc %9.3f)) replace
 /* Callaway and SantAnna (2021) */
 destring geo, replace
 destring id, replace
-gen first_cohort=0
 
-replace first_cohort = 1990 if state == "01" & engl == 1
-replace first_cohort = 1988 if state == "05" & engl == 1
-replace first_cohort = 1991 if state == "10" & engl == 1
-replace first_cohort = 1987 if state == "19" & engl == 1
-replace first_cohort = 1993 if state == "25" & engl == 1
-replace first_cohort = 1993 if state == "26" & engl == 1
-replace first_cohort = 1990 if state == "28" & engl == 1
+gen engl=hrs_exp>=0.1
+gen first_cohort=0
+gen min_cohort =.
+
+replace min_cohort = 1990 if state == "01"
+replace min_cohort = 1988 if state == "05"
+replace min_cohort = 1991 if state == "10"
+replace min_cohort = 1987 if state == "19"
+replace min_cohort = 1993 if state == "25"
+replace min_cohort = 1993 if state == "26"
+replace min_cohort = 1990 if state == "28"
+
+bysort geo: egen min_locality_cohort = min(cohort) if engl == 1 & cohort >= min_cohort
+
+replace first_cohort = max(min_locality_cohort, min_cohort)
+
 keep if cohort>=1975 & cohort<=1996
 
 foreach x in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23{
@@ -119,26 +127,29 @@ estat all
 *========================================================================*
 
 /* Sun and Abraham (2021) */
-gen tgroup=fist_cohort
-replace tgroup=. if state=="02" | state=="03" | state=="08" | state=="18" ///
-| state=="14" | state=="24" | state=="32" | state=="06" | state=="11"
-gen cgroup=tgroup==.
+replace first_cohort = 1990 if state == "01"
+replace first_cohort = 1988 if state == "05"
+replace first_cohort = 1991 if state == "10"
+replace first_cohort = 1987 if state == "19"
+replace first_cohort = 1993 if state == "25"
+replace first_cohort = 1993 if state == "26"
+replace first_cohort = 1990 if state == "28"
 
-eventstudyinteract hrs_exp had_policy if paidw==1 [aw=weight], absorb(geo cohort) ///
-cohort(tgroup) control_cohort(cgroup) covariates(i.edu female indigenous married) ///
-vce(cluster geo)
-eventstudyinteract eng had_policy if paidw==1 [aw=weight], absorb(geo cohort) ///
-cohort(tgroup) control_cohort(cgroup) covariates(i.edu female indigenous married) ///
-vce(cluster geo)
-eventstudyinteract lwage had_policy if paidw==1 [aw=weight], absorb(geo cohort) ///
-cohort(tgroup) control_cohort(cgroup) covariates(i.edu female indigenous married) ///
-vce(cluster geo)
-eventstudyinteract paidw had_policy [aw=weight], absorb(geo cohort) ///
-cohort(tgroup) control_cohort(cgroup) covariates(i.edu female indigenous married) ///
-vce(cluster geo)
-/*eventstudyinteract student had_policy [aw=weight], absorb(geo cohort) ///
-cohort(tgroup) control_cohort(cgroup) covariates(i.edu female indigenous married) ///
-vce(cluster geo)*/
+gen tgroup = first_cohort
+replace tgroup=. if state=="02" | state=="03" | state=="08" | state=="18" | state=="14" | state=="24" | state=="32" | state=="06" | state=="11"
+gen cgroup = tgroup ==.
+
+eventstudyinteract hrs_exp had_policy if paidw == 1 [aw = weight], absorb(geo cohort) ///
+cohort(tgroup) control_cohort(cgroup) covariates(i.edu female indigenous married) vce(cluster geo)
+
+eventstudyinteract eng had_policy if paidw == 1 [aw = weight], absorb(geo cohort) ///
+cohort(tgroup) control_cohort(cgroup) covariates(i.edu female indigenous married) vce(cluster geo)
+
+eventstudyinteract lwage had_policy if paidw == 1 [aw = weight], absorb(geo cohort) ///
+cohort(tgroup) control_cohort(cgroup) covariates(i.edu female indigenous married) vce(cluster geo)
+
+eventstudyinteract paidw had_policy [aw = weight], absorb(geo cohort) ///
+cohort(tgroup) control_cohort(cgroup) covariates(i.edu female indigenous married) vce(cluster geo)
 
 eststo clear
 eststo: areg hrs_exp had_policy i.cohort i.edu female indigenous married ///
