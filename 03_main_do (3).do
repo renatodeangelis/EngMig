@@ -13,9 +13,11 @@ gl doc= "C:\Users\rdeangelis\OneDrive - The University of Chicago"
 *========================================================================*
 use "$data/eng_abil.dta", clear
 keep if biare==1
-keep if state=="01" | state=="05" | state=="10" | state=="19" | state=="25" | state=="26" | state=="28"  | state=="02" | state=="03" | state=="08" | state=="18" | state=="14" | state=="24" | state=="32" | state=="06" | state=="11"
+keep if state=="01" | state=="05" | state=="10" ///
+| state=="19" | state=="25" | state=="26" | state=="28" ///
+| state=="02" | state=="03" | state=="08" | state=="18" ///
+| state=="14" | state=="24" | state=="32" | state=="06" | state=="11"
 
-*gen engl=hrs_exp>=0.1
 gen had_policy=0 
 replace had_policy=1 if state=="01" & (cohort>=1990 & cohort<=1995)
 replace had_policy=1 if state=="05" & (cohort>=1988 & cohort<=1996)
