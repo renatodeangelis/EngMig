@@ -46,9 +46,7 @@ esttab using "$doc\tab_StaggDD.tex", cells(b(star fmt(%9.3f)) se(par)) ///
 star(* 0.10 ** 0.05 *** 0.01) title(English abilities) keep(had_policy) ///
 stats(N ar2, fmt(%9.0fc %9.3f)) replace
 
-/*
-Locality by cohort variation
-*/
+/* Locality by cohort variation */
 use "$data/eng_abil.dta", clear
 keep if biare==1
 keep if state=="01" | state=="05" | state=="10" ///
@@ -170,9 +168,7 @@ stats(N ar2, fmt(%9.0fc %9.3f)) replace
 
 *========================================================================*
 
-/*
-Excluding localities with no exposure in treatment states 
-*/
+/* Excluding localities with no exposure in treatment states  */
 use "$data/eng_abil.dta", clear
 keep if biare==1
 keep if state=="01" | state=="05" | state=="10" ///
