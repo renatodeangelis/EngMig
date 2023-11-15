@@ -13,7 +13,7 @@ gl doc= "C:\Users\rdeangelis\OneDrive - The University of Chicago"
 *========================================================================*
 use "$data/eng_abil.dta", clear
 keep if biare==1
-keep if state=="01" | state=="05" | state=="10" | state=="19" | state=="25" | state=="26" | state=="28"  | state=="02" | state=="03" | state=="08" | state=="18" | state=="14" | state=="24" | state=="32" | state=="06" | state=="11"
+keep if state=="01"| state=="10" | state=="19" | state=="25" | state=="26" | state=="28"  | state=="02" | state=="03" | state=="08" | state=="18" | state=="14" | state=="24" | state=="32" | state=="06" | state=="11"
 
 *gen engl=hrs_exp>=0.1
 gen had_policy=0 
@@ -90,7 +90,7 @@ destring id, replace
 
 gen engl = hrs_exp >= 0.1
 gen first_cohort = 0
-gen min_cohort = 0.
+gen min_cohort = 0
 
 replace min_cohort = 1990 if state == "01"
 replace min_cohort = 1988 if state == "05"
@@ -100,11 +100,11 @@ replace min_cohort = 1993 if state == "25"
 replace min_cohort = 1993 if state == "26"
 replace min_cohort = 1990 if state == "28"
 
-bysort geo: egen min_locality_cohort = min(cohort) if engl == 1 & cohort >= min_cohort ///
-& (state=="01" | state=="05" | state=="10" | state=="19" | state=="25" ///
+bysort geo: egen min_locality_cohort = min(cohort) if engl == 1 & cohort >= min_cohort& (state=="01" | state=="05" | state=="10" | state=="19" | state=="25" ///
 | state=="26" | state=="28")
+replace min_locality_cohort = 0 if min_locality_cohort==.
 
-bysort geo cohort: replace first_cohort = max(min_locality_cohort, min_cohort) if cohort >= min_cohort & engl == 1 | (engl == 0 & (engl[_n-1] == 1 | engl[_n-2] == 1))
+bysort geo: replace first_cohort = min_locality_cohort
 
 keep if cohort>=1975 & cohort<=1996
 
@@ -379,6 +379,62 @@ eststo: areg paidw had_policy i.cohort i.edu female indigenous married i.state_c
 eststo: areg lwage had_policy i.cohort i.edu female indigenous married i.state_cohort ///
 [aw=weight]  if paidw==1, absorb(geo) vce(cluster geo)*/
 *<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<=================================================================== I modified this part!!!
+/*
+gen delayed_uptake=0
+replace delayed_uptake=1 if state=="01" & cohort==1990 & engl == 0
+replace delayed_uptake=1 if state=="05" & cohort==1988 & engl == 0
+replace delayed_uptake=1 if state=="10" & cohort==1991 & engl == 0
+replace delayed_uptake=1 if state=="19" & cohort==1987 & engl == 0
+replace delayed_uptake=1 if state=="25" & cohort==1993 & engl == 0
+replace delayed_uptake=1 if state=="26" & cohort==1993 & engl == 0
+replace delayed_uptake=1 if state=="28" & cohort==1990 & engl == 0
+
+egen any_delayed_uptake = max(delayed_uptake), by(geo)
+bysort geo (any_delayed_uptake): drop if any_delayed_uptake[1] == 1
+drop delayed_uptake, any_delayed_uptake
+*/
+gen engl = hrs_exp >= 0.1
+gen fst_cohort = 0
+gen min_cohort = 0
+
+replace min_cohort = 1990 if state == "01"
+replace min_cohort = 1988 if state == "05"
+replace min_cohort = 1991 if state == "10"
+replace min_cohort = 1987 if state == "19"
+replace min_cohort = 1993 if state == "25"
+replace min_cohort = 1993 if state == "26"
+replace min_cohort = 1990 if state == "28"
+
+bysort geo: egen min_locality_cohort = min(cohort) if engl == 1 & cohort >= min_cohort ///
+& (state=="01" | state=="05" | state=="10" | state=="19" | state=="25" ///
+| state=="26" | state=="28")
+
+bysort geo cohort: replace fst_cohort = max(min_locality_cohort, min_cohort) if cohort >= min_cohort & engl == 1 | (engl == 0 & (engl[_n-1] == 1 | engl[_n-2] == 1))
+
+bysort geo: egen first_cohort = max(fst_cohort)
+
+keep if cohort>=1975 & cohort<=1996
+
+bysort geo cohort: gen treat2 = cohort == (first_cohort - 8)
+bysort geo cohort: gen treat3 = cohort == (first_cohort - 7)
+bysort geo cohort: gen treat4 = cohort == (first_cohort - 6)
+bysort geo cohort: gen treat5 = cohort == (first_cohort - 5)
+bysort geo cohort: gen treat6 = cohort == (first_cohort - 4)
+bysort geo cohort: gen treat7 = cohort == (first_cohort - 3)
+bysort geo cohort: gen treat8 = cohort == (first_cohort - 2)
+bysort geo cohort: gen treat9 = cohort == (first_cohort - 1)
+bysort geo cohort: gen treat10 = cohort == first_cohort
+bysort geo cohort: gen treat11 = cohort == (first_cohort + 1)
+bysort geo cohort: gen treat12 = cohort == (first_cohort + 2)
+bysort geo cohort: gen treat13 = cohort == (first_cohort + 3)
+bysort geo cohort: gen treat14 = cohort == (first_cohort + 4)
+bysort geo cohort: gen treat15 = cohort == (first_cohort + 5)
+bysort geo cohort: gen treat16 = cohort == (first_cohort + 6)
+bysort geo cohort: gen treat17 = cohort == (first_cohort + 7)
+bysort geo cohort: gen treat18 = cohort == (first_cohort + 8)
+
+
+*/
 gen treat2=cohort==1980 & engl==1 & state=="05"
 gen treat3=cohort==1981 & engl==1 & state=="05"
 gen treat4=cohort==1981 & engl==1 & state=="19"
@@ -470,6 +526,7 @@ replace treat13=1 if cohort==1993 & engl==1 & state=="28"
 replace treat14=1 if cohort==1994 & engl==1 & state=="28"
 replace treat15=1 if cohort==1995 & engl==1 & state=="28"
 replace treat16=1 if cohort==1996 & engl==1 & state=="28"
+*/
 
 replace treat9=0
 
@@ -484,6 +541,8 @@ label var treat9 "-1"
 foreach x in 0 1 2 3 4 5 6 7 8 {
 	label var treat1`x' "`x'"
 }
+
+
 /* Panel (a) Hours of English */
 areg hrs_exp treat* i.cohort cohort i.edu female indigenous married ///
 [aw=weight] if cohort>=1980 & cohort<=1995 & paidw==1, absorb(geo) vce(cluster geo)
