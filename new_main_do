@@ -80,6 +80,44 @@ eventstudyinteract student had_policy [aw=weight], absorb(geo cohort) ///
 cohort(tgroup) control_cohort(cgroup) covariates(i.edu female indigenous married) ///
 vce(cluster geo)
 
+gen rc = cohort - fist_cohort
+
+forvalues k = 8(-1)1 {
+           gen g_`k' = rc == -`k'
+        }
+
+forvalues k = 0/8 {
+             gen g`k' = rc == `k'
+        }
+
+replace g_1 = 0
+
+eventstudyinteract hrs_exp g_* g0-g8 if paidw==1 [aw=weight], absorb(geo cohort) ///
+cohort(tgroup) control_cohort(cgroup) covariates(i.edu female indigenous married) ///
+vce(cluster geo)
+
+matrix C = e(b_iw)
+mata st_matrix("A",sqrt(diagonal(st_matrix("e(V_iw)"))))
+matrix C = C \ A'
+matrix list C
+coefplot matrix(C[1]), se(C[2])
+
+eventstudyinteract eng g_* g0-g8 if paidw==1 [aw=weight], absorb(geo cohort) ///
+cohort(tgroup) control_cohort(cgroup) covariates(i.edu female indigenous married) ///
+vce(cluster geo)
+
+eventstudyinteract lwage g_* g0-g8 if paidw==1 [aw=weight], absorb(geo cohort) ///
+cohort(tgroup) control_cohort(cgroup) covariates(i.edu female indigenous married) ///
+vce(cluster geo)
+
+eventstudyinteract paidw g_* g0-g8 [aw=weight], absorb(geo cohort) ///
+cohort(tgroup) control_cohort(cgroup) covariates(i.edu female indigenous married) ///
+vce(cluster geo)
+
+eventstudyinteract student g_* g0-g8 [aw=weight], absorb(geo cohort) ///
+cohort(tgroup) control_cohort(cgroup) covariates(i.edu female indigenous married) ///
+vce(cluster geo)
+
 /* Callaway and SantAnna (2021) */
 
 foreach x in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23{
