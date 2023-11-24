@@ -144,16 +144,83 @@ gen educ`x'=edu==`x'
 
 csdid paidw female indigenous married educ* [iw=weight], time(cohort) gvar(fist_cohort) method(dripw) wboot vce(cluster geo)
 estat all
+
+estat event, window(-6 8) estore(cs) 
+
+coefplot cs, vertical yline(0) omitted baselevels ///
+xline(6.5, lstyle(grid) lpattern(dash) lcolor(ltblue)) ///
+ytitle("Paid Wages", size(medium) height(5)) ///
+ylabel(-0.25(0.25)1.5, labs(medium) grid format(%5.2f)) ///
+xtitle("Cohorts since policy intervention", size(medium) height(5)) ///
+xlabel(, angle(vertical) labs(medium)) ///
+graphregion(color(white)) scheme(s2mono) ciopts(recast(rcap)) ///
+ysc(r(-0.25 1.5)) recast(connected)
+graph export "$doc\PTA_StaggDD1.png", replace
+
+
 csdid student female indigenous married educ* [iw=weight], time(cohort) gvar(fist_cohort) method(dripw) wboot vce(cluster geo)
 estat all
+
+estat event, window(-6 8) estore(cs) 
+
+coefplot cs, vertical yline(0) omitted baselevels ///
+xline(6.5, lstyle(grid) lpattern(dash) lcolor(ltblue)) ///
+ytitle("Likelihood of Being Student", size(medium) height(5)) ///
+ylabel(-0.25(0.25)1.5, labs(medium) grid format(%5.2f)) ///
+xtitle("Cohorts since policy intervention", size(medium) height(5)) ///
+xlabel(, angle(vertical) labs(medium)) ///
+graphregion(color(white)) scheme(s2mono) ciopts(recast(rcap)) ///
+ysc(r(-0.25 1.5)) recast(connected)
+graph export "$doc\PTA_StaggDD1.png", replace
+
 
 keep if paidw==1
 csdid hrs_exp female indigenous married educ* [iw=weight], time(cohort) gvar(fist_cohort) method(dripw) wboot vce(cluster geo)
 estat all
+
+estat event, window(-6 8) estore(cs) 
+
+coefplot cs, vertical yline(0) omitted baselevels ///
+xline(6.5, lstyle(grid) lpattern(dash) lcolor(ltblue)) ///
+ytitle("Weekly hours of English instruction", size(medium) height(5)) ///
+ylabel(-0.25(0.25)1.5, labs(medium) grid format(%5.2f)) ///
+xtitle("Cohorts since policy intervention", size(medium) height(5)) ///
+xlabel(, angle(vertical) labs(medium)) ///
+graphregion(color(white)) scheme(s2mono) ciopts(recast(rcap)) ///
+ysc(r(-0.25 1.5)) recast(connected)
+graph export "$doc\PTA_StaggDD1.png", replace
+
+
 csdid eng female indigenous married educ* [iw=weight], time(cohort) gvar(fist_cohort) method(dripw) wboot vce(cluster geo) 
 estat all
+
+estat event, window(-6 8) estore(cs) 
+
+coefplot cs, vertical yline(0) omitted baselevels ///
+xline(6.5, lstyle(grid) lpattern(dash) lcolor(ltblue)) ///
+ytitle("Likelihood of Speaking English", size(medium) height(5)) ///
+ylabel(-0.25(0.25)1.5, labs(medium) grid format(%5.2f)) ///
+xtitle("Cohorts since policy intervention", size(medium) height(5)) ///
+xlabel(, angle(vertical) labs(medium)) ///
+graphregion(color(white)) scheme(s2mono) ciopts(recast(rcap)) ///
+ysc(r(-0.25 1.5)) recast(connected)
+graph export "$doc\PTA_StaggDD1.png", replace
+
+
 csdid lwage edu female indigenous married educ* [iw=weight], time(cohort) gvar(fist_cohort) method(dripw) wboot vce(cluster geo)
 estat all
+
+estat event, window(-6 8) estore(cs) 
+
+coefplot cs, vertical yline(0) omitted baselevels ///
+xline(6.5, lstyle(grid) lpattern(dash) lcolor(ltblue)) ///
+ytitle("Log Wages", size(medium) height(5)) ///
+ylabel(-0.25(0.25)1.5, labs(medium) grid format(%5.2f)) ///
+xtitle("Cohorts since policy intervention", size(medium) height(5)) ///
+xlabel(, angle(vertical) labs(medium)) ///
+graphregion(color(white)) scheme(s2mono) ciopts(recast(rcap)) ///
+ysc(r(-0.25 1.5)) recast(connected)
+graph export "$doc\PTA_StaggDD1.png", replace
 
 *========================================================================*
 /* APPENDIX */
