@@ -353,230 +353,6 @@ legend(off) ///
 graphregion(color(white)) ciopts(recast(rcap)) levels(90)
 graph export "$doc\graphSDDheterAbro.png", replace
 *========================================================================*
-/* TABLE XX. English programs and English-intensive occupations */
-*========================================================================*
-use "$data/eng_abil.dta", clear
-keep if biare==1
-keep if state=="01" | state=="05" | state=="10" ///
-| state=="19" | state=="25" | state=="26" | state=="28" ///
-| state=="02" | state=="03" | state=="08" | state=="18" ///
-| state=="14" | state=="24" | state=="32" | state=="06" | state=="11"
-keep if cohort>=1975 & cohort<=1996
-
-collapse (mean) eng [fw=weight], by(sinco)
-rename eng peng
-xtile eng_int=peng, nq(4)
-label var peng "Distribution of English speakers across occupations"
-histogram peng, frac graphregion(fcolor(white)) color(gs12) ///
-xline(0.042, lstyle(grid) lpattern(dash) lcolor(red)) 
-graph export "$doc\histo_eng.png", replace
-save "$base/peng.dta", replace
-
-use "$data/eng_abil.dta", clear
-keep if biare==1
-keep if state=="01" | state=="05" | state=="10" ///
-| state=="19" | state=="25" | state=="26" | state=="28" ///
-| state=="02" | state=="03" | state=="08" | state=="18" ///
-| state=="14" | state=="24" | state=="32" | state=="06" | state=="11"
-
-gen had_policy=0 
-replace had_policy=1 if state=="01" & (cohort>=1990 & cohort<=1995)
-replace had_policy=1 if state=="05" & (cohort>=1988 & cohort<=1996)
-replace had_policy=1 if state=="10" & (cohort>=1991 & cohort<=1996)
-replace had_policy=1 if state=="19" & (cohort>=1987 & cohort<=1996)
-replace had_policy=1 if state=="25" & (cohort>=1993 & cohort<=1996)
-replace had_policy=1 if state=="26" & (cohort>=1993 & cohort<=1996)
-replace had_policy=1 if state=="28" & (cohort>=1990 & cohort<=1996)
-keep if cohort>=1975 & cohort<=1996
-
-merge m:1 sinco using "$base/peng.dta", nogen
-
-gen treat2=cohort==1980 & state=="05"
-gen treat3=cohort==1981 & state=="05"
-gen treat4=cohort==1981 & state=="19"
-gen treat5=cohort==1982 & state=="19"
-gen treat6=cohort==1983 & state=="19"
-gen treat7=cohort==1984 & state=="19"
-gen treat8=cohort==1985 & state=="19"
-gen treat9=cohort==1986 & state=="19"
-gen treat10=cohort==1987 & state=="19"
-gen treat11=cohort==1988 & state=="19"
-gen treat12=cohort==1989 & state=="19"
-gen treat13=cohort==1990 & state=="19"
-gen treat14=cohort==1991 & state=="19"
-gen treat15=cohort==1992 & state=="19"
-gen treat16=cohort==1993 & state=="19"
-gen treat17=cohort==1994 & state=="19"
-gen treat18=cohort==1995 & state=="19"
-*gen treat19=cohort==1996 & state=="19"
-
-replace treat6=1 if cohort==1986 & state=="01"
-replace treat7=1 if cohort==1987 & state=="01"
-replace treat8=1 if cohort==1988 & state=="01"
-replace treat9=1 if cohort==1989 & state=="01"
-replace treat10=1 if cohort==1990 & state=="01"
-replace treat11=1 if cohort==1991 & state=="01"
-replace treat12=1 if cohort==1992 & state=="01"
-replace treat13=1 if cohort==1993 & state=="01"
-replace treat14=1 if cohort==1994 & state=="01"
-replace treat15=1 if cohort==1995 & state=="01"
-replace treat16=1 if cohort==1996 & state=="01"
-
-replace treat4=1 if cohort==1982 & state=="05"
-replace treat5=1 if cohort==1983 & state=="05"
-replace treat6=1 if cohort==1984 & state=="05"
-replace treat7=1 if cohort==1985 & state=="05"
-replace treat8=1 if cohort==1986 & state=="05"
-replace treat9=1 if cohort==1987 & state=="05"
-replace treat10=1 if cohort==1988 & state=="05"
-replace treat11=1 if cohort==1989 & state=="05"
-replace treat12=1 if cohort==1990 & state=="05"
-replace treat13=1 if cohort==1991 & state=="05"
-replace treat14=1 if cohort==1992 & state=="05"
-replace treat15=1 if cohort==1993 & state=="05"
-replace treat16=1 if cohort==1994 & state=="05"
-replace treat17=1 if cohort==1995 & state=="05"
-replace treat18=1 if cohort==1996 & state=="05"
-
-replace treat4=1 if cohort==1985 & state=="10"
-replace treat5=1 if cohort==1986 & state=="10"
-replace treat6=1 if cohort==1987 & state=="10"
-replace treat7=1 if cohort==1988 & state=="10"
-replace treat8=1 if cohort==1989 & state=="10"
-replace treat9=1 if cohort==1990 & state=="10"
-replace treat10=1 if cohort==1991 & state=="10"
-replace treat11=1 if cohort==1992 & state=="10"
-replace treat12=1 if cohort==1993 & state=="10"
-replace treat13=1 if cohort==1994 & state=="10"
-replace treat14=1 if cohort==1995 & state=="10"
-replace treat15=1 if cohort==1996 & state=="10"
-
-replace treat6=1 if cohort==1989 & state=="25"
-replace treat7=1 if cohort==1990 & state=="25"
-replace treat8=1 if cohort==1991 & state=="25"
-replace treat9=1 if cohort==1992 & state=="25"
-replace treat10=1 if cohort==1993 & state=="25"
-replace treat11=1 if cohort==1994 & state=="25"
-replace treat12=1 if cohort==1995 & state=="25"
-replace treat13=1 if cohort==1996 & state=="25"
-
-*replace treat7=1 if cohort==1990 & state=="26"
-replace treat8=1 if cohort==1991 & state=="26"
-replace treat9=1 if cohort==1992 & state=="26"
-replace treat10=1 if cohort==1993 & state=="26"
-replace treat11=1 if cohort==1994 & state=="26"
-replace treat12=1 if cohort==1995 & state=="26"
-replace treat13=1 if cohort==1996 & state=="26"
-
-replace treat3=1 if cohort==1983 & state=="28"
-replace treat4=1 if cohort==1984 & state=="28"
-replace treat5=1 if cohort==1985 & state=="28"
-replace treat6=1 if cohort==1986 & state=="28"
-replace treat7=1 if cohort==1987 & state=="28"
-replace treat8=1 if cohort==1988 & state=="28"
-replace treat9=1 if cohort==1989 & state=="28"
-replace treat10=1 if cohort==1990 & state=="28"
-replace treat11=1 if cohort==1991 & state=="28"
-replace treat12=1 if cohort==1992 & state=="28"
-replace treat13=1 if cohort==1993 & state=="28"
-replace treat14=1 if cohort==1994 & state=="28"
-replace treat15=1 if cohort==1995 & state=="28"
-replace treat16=1 if cohort==1996 & state=="28"
-
-replace treat9=0
-
-label var treat2 "-8"
-label var treat3 "-7"
-label var treat4 "-6"
-label var treat5 "-5"
-label var treat6 "-4"
-label var treat7 "-3"
-label var treat8 "-2"
-label var treat9 "-1"
-foreach x in 0 1 2 3 4 5 6 7 8 {
-	label var treat1`x' "`x'"
-}
-gen eng_int_occup=eng_int>=3
-/* XXX */
-areg eng_int_occup treat* i.cohort cohort i.edu female indigenous married ///
-[aw=weight] if cohort>=1980 & cohort<=1995 & paidw==1, absorb(geo) vce(cluster geo)
-coefplot, vertical keep(treat*) yline(0) omitted baselevels ///
-xline(9, lstyle(grid) lpattern(dash) lcolor(ltblue)) ///
-ytitle("Likelihood of working in English-intensive occupations", size(medium) height(5)) ///
-ylabel(-.5(0.25).5, labs(medium) grid format(%5.2f)) ///
-xtitle("Cohorts since policy intervention", size(medium) height(5)) ///
-xlabel(, angle(vertical) labs(medium)) ///
-graphregion(color(white)) scheme(s2mono) ciopts(recast(rcap)) ///
-ysc(r(-0.5 .5)) recast(connected)
-graph export "$doc\PTA_StaggDD_EngOccup.png", replace
-
-areg eng_int_occup treat* i.cohort cohort i.edu female indigenous married ///
-[aw=weight] if cohort>=1980 & cohort<=1995 & paidw==1 & edu<=9, absorb(geo) vce(cluster geo)
-estimates store low
-areg eng_int_occup treat* i.cohort cohort i.edu female indigenous married ///
-[aw=weight] if cohort>=1980 & cohort<=1995 & paidw==1 & edu>9, absorb(geo) vce(cluster geo)
-estimates store high
-
-coefplot ///
-(low, label("Low-education") msymbol(O) mcolor(gs14) ciopt(lc(gs14) recast(rcap))) ///
-(high, label("High-education") msymbol(O) mcolor(dknavy) ciopt(lc(dknavy) recast(rcap))) ///
-, vertical keep(treat*) yline(0) omitted baselevels ///
-xline(9, lstyle(grid) lpattern(dash) lcolor(ltblue)) ///
-ytitle("Likelihood of working in English-intensive occupations", size(medium) height(5)) ///
-ylabel(-.8(.4).8, labs(medium) grid format(%5.2f)) ///
-xtitle("Cohorts since policy intervention", size(medium) height(5)) ///
-xlabel(, angle(vertical) labs(medium)) ///
-graphregion(color(white)) scheme(s2mono) ciopts(recast(rcap)) ///
-legend( pos(8) ring(0) col(1) region(lcolor(white)) size(medium)) ///
-ysc(r(-.8 .8)) levels(90) 
-graph export "$doc\PTA_StaggDD_HLoccup.png", replace
-
-/* XXX */
-/*eststo clear
-drop eng_int_occup
-gen eng_int_occup=eng_int==4
-areg eng_int_occup treat* i.cohort cohort i.edu female indigenous married ///
-[aw=weight] if cohort>=1980 & cohort<=1995 & paidw==1, absorb(geo) vce(cluster geo)
-coefplot, vertical keep(treat*) yline(0) omitted baselevels ///
-xline(9, lstyle(grid) lpattern(dash) lcolor(ltblue)) ///
-ytitle("Likelihood of working in English-intensive occupations", size(medium) height(5)) ///
-ylabel(-.5(0.25).5, labs(medium) grid format(%5.2f)) ///
-xtitle("Cohorts since policy intervention", size(medium) height(5)) ///
-xlabel(, angle(vertical) labs(medium)) ///
-graphregion(color(white)) scheme(s2mono) ciopts(recast(rcap)) ///
-ysc(r(-0.5 .5)) recast(connected)
-graph export "$doc\PTA_StaggDD_EngOccupL.png", replace
-
-areg eng_int_occup treat* i.cohort cohort i.edu female indigenous married ///
-[aw=weight] if cohort>=1980 & cohort<=1995 & paidw==1 & edu<=9, absorb(geo) vce(cluster geo)
-estimates store low
-areg eng_int_occup treat* i.cohort cohort i.edu female indigenous married ///
-[aw=weight] if cohort>=1980 & cohort<=1995 & paidw==1 & edu>9, absorb(geo) vce(cluster geo)
-estimates store high
-
-coefplot ///
-(low, label("Low-English intensive") msymbol(O) mcolor(gs14) ciopt(lc(gs14) recast(rcap))) ///
-(high, label("High-English intensive") msymbol(O) mcolor(dknavy) ciopt(lc(dknavy) recast(rcap))) ///
-, vertical keep(treat*) yline(0) omitted baselevels ///
-xline(9, lstyle(grid) lpattern(dash) lcolor(ltblue)) ///
-ytitle("Likelihood of working in English-intensive occupations", size(medium) height(5)) ///
-ylabel(-.8(.4).8, labs(medium) grid format(%5.2f)) ///
-xtitle("Cohorts since policy intervention", size(medium) height(5)) ///
-xlabel(, angle(vertical) labs(medium)) ///
-graphregion(color(white)) scheme(s2mono) ciopts(recast(rcap)) ///
-legend( pos(8) ring(0) col(1) region(lcolor(white)) size(medium)) ///
-ysc(r(-.8 .8)) levels(90) 
-graph export "$doc\PTA_StaggDD_HLoccupL.png", replace*/
-
-/*
-areg eng_int_occup had_policy i.cohort i.edu female rural ///
-indigenous married [aw=weight] if paidw==1, absorb(geo) vce(cluster geo)
-areg eng_int_occup had_policy i.cohort i.edu female rural ///
-indigenous married [aw=weight] if paidw==1 & edu<=9, absorb(geo) vce(cluster geo)
-areg eng_int_occup had_policy i.cohort i.edu female rural ///
-indigenous married [aw=weight] if paidw==1 & edu>9, absorb(geo) vce(cluster geo)
-*/
-*========================================================================*
 /* TABLE XX. English programs and types of occupations */
 *========================================================================*
 use "$data/eng_abil.dta", clear
@@ -605,20 +381,32 @@ merge m:1 o_net_code19 using "$data/onet_analyzing.dta"
 drop if _merge==2
 drop _merge
 
-keep if state=="01" | state=="05" | state=="10" ///
-| state=="19" | state=="25" | state=="26" | state=="28" ///
-| state=="02" | state=="03" | state=="08" | state=="18" ///
-| state=="14" | state=="24" | state=="32" | state=="06" | state=="11"
+replace hrs_exp=hrs_exp/2 if state=="19" & cohort<1987
+replace hrs_exp=hrs_exp/2 if state=="01" & cohort<1990
+drop if state=="05" | state=="17"
+gen engl=hrs_exp>=0.1
 
 gen had_policy=0 
-replace had_policy=1 if state=="01" & (cohort>=1990 & cohort<=1995)
-replace had_policy=1 if state=="05" & (cohort>=1988 & cohort<=1996)
+replace had_policy=1 if state=="01" & (cohort>=1990 & cohort<=1996)
 replace had_policy=1 if state=="10" & (cohort>=1991 & cohort<=1996)
 replace had_policy=1 if state=="19" & (cohort>=1987 & cohort<=1996)
 replace had_policy=1 if state=="25" & (cohort>=1993 & cohort<=1996)
 replace had_policy=1 if state=="26" & (cohort>=1993 & cohort<=1996)
 replace had_policy=1 if state=="28" & (cohort>=1990 & cohort<=1996)
-keep if cohort>=1975 & cohort<=1996
+keep if cohort>=1981 & cohort<=1996
+
+destring geo, replace
+gen fist_cohort=0
+replace fist_cohort=1990 if state=="01" & engl==1
+replace fist_cohort=1991 if state=="10" & engl==1
+replace fist_cohort=1987 if state=="19" & engl==1
+replace fist_cohort=1993 if state=="25" & engl==1
+replace fist_cohort=1993 if state=="26" & engl==1
+replace fist_cohort=1990 if state=="28" & engl==1
+
+foreach x in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23{
+gen educ`x'=edu==`x'
+}
 
 gen treat2=cohort==1980 & state=="05"
 gen treat3=cohort==1981 & state=="05"
