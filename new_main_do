@@ -147,7 +147,7 @@ estat all
 
 estat event, window(-6 8) estore(cs) 
 
-coefplot cs, vertical yline(0) omitted baselevels ///
+coefplot cs, vertical yline(0) drop(Pre_avg Post_avg) omitted baselevels ///
 xline(6.5, lstyle(grid) lpattern(dash) lcolor(ltblue)) ///
 ytitle("Paid Wages", size(medium) height(5)) ///
 ylabel(-0.25(0.25)1.5, labs(medium) grid format(%5.2f)) ///
@@ -163,7 +163,7 @@ estat all
 
 estat event, window(-6 8) estore(cs) 
 
-coefplot cs, vertical yline(0) omitted baselevels ///
+coefplot cs, vertical yline(0) drop(Pre_avg Post_avg) omitted baselevels ///
 xline(6.5, lstyle(grid) lpattern(dash) lcolor(ltblue)) ///
 ytitle("Likelihood of Being Student", size(medium) height(5)) ///
 ylabel(-0.25(0.25)1.5, labs(medium) grid format(%5.2f)) ///
@@ -180,7 +180,7 @@ estat all
 
 estat event, window(-6 8) estore(cs) 
 
-coefplot cs, vertical yline(0) omitted baselevels ///
+coefplot cs, vertical yline(0) drop(Pre_avg Post_avg) omitted baselevels ///
 xline(6.5, lstyle(grid) lpattern(dash) lcolor(ltblue)) ///
 ytitle("Weekly hours of English instruction", size(medium) height(5)) ///
 ylabel(-0.25(0.25)1.5, labs(medium) grid format(%5.2f)) ///
@@ -196,7 +196,7 @@ estat all
 
 estat event, window(-6 8) estore(cs) 
 
-coefplot cs, vertical yline(0) omitted baselevels ///
+coefplot cs, vertical yline(0) drop(Pre_avg Post_avg) omitted baselevels ///
 xline(6.5, lstyle(grid) lpattern(dash) lcolor(ltblue)) ///
 ytitle("Likelihood of Speaking English", size(medium) height(5)) ///
 ylabel(-0.25(0.25)1.5, labs(medium) grid format(%5.2f)) ///
@@ -212,7 +212,7 @@ estat all
 
 estat event, window(-6 8) estore(cs) 
 
-coefplot cs, vertical yline(0) omitted baselevels ///
+coefplot cs, vertical yline(0) drop(Pre_avg Post_avg) omitted baselevels ///
 xline(6.5, lstyle(grid) lpattern(dash) lcolor(ltblue)) ///
 ytitle("Log Wages", size(medium) height(5)) ///
 ylabel(-0.25(0.25)1.5, labs(medium) grid format(%5.2f)) ///
