@@ -544,37 +544,17 @@ graphregion(color(white)) scheme(s2mono) ciopts(recast(rcap)) ///
 ysc(r(-0.5 .5)) recast(connected)
 graph export "$doc\PTA_SDD_PhysicalOccup.png", replace
 
-
-areg phy_act1 treat* i.cohort cohort i.edu female indigenous married ///
-[aw=weight] if cohort>=1980 & cohort<=1995 & paidw==1, absorb(geo) vce(cluster geo)
-coefplot, vertical keep(treat*) yline(0) omitted baselevels ///
-xline(9, lstyle(grid) lpattern(dash) lcolor(ltblue)) ///
-ytitle("Likelihood of working in physically-intensive jobs", size(medium) height(5)) ///
-ylabel(-.5(0.25).5, labs(medium) grid format(%5.2f)) ///
-xtitle("Cohorts since policy intervention", size(medium) height(5)) ///
-xlabel(, angle(vertical) labs(medium)) ///
-graphregion(color(white)) scheme(s2mono) ciopts(recast(rcap)) ///
-ysc(r(-0.5 .5)) recast(connected)
-graph export "$doc\PTA_SDD_PhysicalOccup.png", replace
-
 snapshot save, label(snapshot1)
 keep if edu<=9
 csdid phy_act1 female indigenous married educ* [iw=weight], time(cohort) gvar(fist_cohort) method(dripw) wboot vce(cluster geo)
 estat event, window(-6 8) estore(phys_low)
-restore snapshot 1
+snapshot restore 1
 
 snapshot save, label(snapshot1)
 keep if edu>9
 csdid phy_act1 female indigenous married educ* [iw=weight], time(cohort) gvar(fist_cohort) method(dripw) wboot vce(cluster geo)
 estat event, window(-6 8) estore(phys_high)
-restore snapshot 1
-
-areg phy_act1 treat* i.cohort cohort i.edu female indigenous married ///
-[aw=weight] if cohort>=1980 & cohort<=1995 & paidw==1 & edu<=9, absorb(geo) vce(cluster geo)
-estimates store low
-areg phy_act1 treat* i.cohort cohort i.edu female indigenous married ///
-[aw=weight] if cohort>=1980 & cohort<=1995 & paidw==1 & edu>9, absorb(geo) vce(cluster geo)
-estimates store high
+snapshot restore 1
 
 coefplot ///
 (phys_low, label("Low-education") msymbol(O) mcolor(gs14) ciopt(lc(gs14) recast(rcap))) ///
@@ -594,20 +574,13 @@ snapshot save, label(snapshot1)
 keep if female==1
 csdid phy_act1 female indigenous married educ* [iw=weight], time(cohort) gvar(fist_cohort) method(dripw) wboot vce(cluster geo)
 estat event, window(-6 8) estore(phys_women)
-restore snapshot 1
+snapshot restore 1
 
 snapshot save, label(snapshot1)
 keep if female==0
 csdid phy_act1 female indigenous married educ* [iw=weight], time(cohort) gvar(fist_cohort) method(dripw) wboot vce(cluster geo)
 estat event, window(-6 8) estore(phys_men)
-restore snapshot 1
-
-areg phy_act1 treat* i.cohort cohort i.edu female indigenous married ///
-[aw=weight] if cohort>=1980 & cohort<=1995 & paidw==1 & female==1, absorb(geo) vce(cluster geo)
-estimates store women
-areg phy_act1 treat* i.cohort cohort i.edu female indigenous married ///
-[aw=weight] if cohort>=1980 & cohort<=1995 & paidw==1 & female==0, absorb(geo) vce(cluster geo)
-estimates store men
+snapshot restore 1
 
 coefplot ///
 (phys_women, label("Women") msymbol(O) mcolor(gs14) ciopt(lc(gs14) recast(rcap))) ///
