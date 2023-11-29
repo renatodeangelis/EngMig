@@ -491,10 +491,10 @@ ysc(r(-.8 .8)) levels(90)
 graph export "$doc\PTA_SDD_PhysicalOccup_Gender.png", replace
 
 *========================================================================*
-
-areg communica treat* i.cohort cohort i.edu female indigenous married ///
-[aw=weight] if cohort>=1980 & cohort<=1995 & paidw==1, absorb(geo) vce(cluster geo)
-coefplot, vertical keep(treat*) yline(0) omitted baselevels ///
+keep if paidw==1
+csdid communica female indigenous married educ* [iw=weight], time(cohort) gvar(fist_cohort) method(dripw) wboot vce(cluster geo)
+estat event, window(-6 8) estore(comm)
+coefplot comm, vertical yline(0) omitted baselevels ///
 xline(9, lstyle(grid) lpattern(dash) lcolor(ltblue)) ///
 ytitle("Likelihood of working in communication-intensive jobs", size(medium) height(5)) ///
 ylabel(-.5(0.25).5, labs(medium) grid format(%5.2f)) ///
@@ -504,17 +504,22 @@ graphregion(color(white)) scheme(s2mono) ciopts(recast(rcap)) ///
 ysc(r(-0.5 .5)) recast(connected)
 graph export "$doc\PTA_SDD_CommunicaOccup.png", replace
 
-areg communica treat* i.cohort cohort i.edu female indigenous married ///
-[aw=weight] if cohort>=1980 & cohort<=1995 & paidw==1 & edu<=9, absorb(geo) vce(cluster geo)
-estimates store low
-areg communica treat* i.cohort cohort i.edu female indigenous married ///
-[aw=weight] if cohort>=1980 & cohort<=1995 & paidw==1 & edu>9, absorb(geo) vce(cluster geo)
-estimates store high
+snapshot save, label(snapshot1)
+keep if edu<=9
+csdid communica female indigenous married educ* [iw=weight], time(cohort) gvar(fist_cohort) method(dripw) wboot vce(cluster geo)
+estat event, window(-6 8) estore(comm_low)
+snapshot restore 1
+
+snapshot save, label(snapshot1)
+keep if edu>9
+csdid communica female indigenous married educ* [iw=weight], time(cohort) gvar(fist_cohort) method(dripw) wboot vce(cluster geo)
+estat event, window(-6 8) estore(comm_high)
+snapshot restore 1
 
 coefplot ///
-(low, label("Low-Educational Achievement") msymbol(O) mcolor(gs14) ciopt(lc(gs14) recast(rcap))) ///
-(high, label("High-Educational Achievement") msymbol(O) mcolor(dknavy) ciopt(lc(dknavy) recast(rcap))) ///
-, vertical keep(treat*) yline(0) omitted baselevels ///
+(comm_low, label("Low-Educational Achievement") msymbol(O) mcolor(gs14) ciopt(lc(gs14) recast(rcap))) ///
+(comm_high, label("High-Educational Achievement") msymbol(O) mcolor(dknavy) ciopt(lc(dknavy) recast(rcap))) ///
+, vertical yline(0) omitted baselevels ///
 xline(9, lstyle(grid) lpattern(dash) lcolor(ltblue)) ///
 ytitle("Likelihood of working in communication-intensive jobs", size(medium) height(5)) ///
 ylabel(-.8(.4).8, labs(medium) grid format(%5.2f)) ///
@@ -525,17 +530,22 @@ legend( pos(8) ring(0) col(1) region(lcolor(white)) size(medium)) ///
 ysc(r(-.8 .8)) levels(90) 
 graph export "$doc\PTA_SDD_CommunicaOccup_Educa.png", replace
 
-areg communica treat* i.cohort cohort i.edu female indigenous married ///
-[aw=weight] if cohort>=1980 & cohort<=1995 & paidw==1 & female==1, absorb(geo) vce(cluster geo)
-estimates store women
-areg communica treat* i.cohort cohort i.edu female indigenous married ///
-[aw=weight] if cohort>=1980 & cohort<=1995 & paidw==1 & female==0, absorb(geo) vce(cluster geo)
-estimates store men
+snapshot save, label(snapshot1)
+keep if female==1
+csdid phy_act1 female indigenous married educ* [iw=weight], time(cohort) gvar(fist_cohort) method(dripw) wboot vce(cluster geo)
+estat event, window(-6 8) estore(comm_women)
+snapshot restore 1
+
+snapshot save, label(snapshot1)
+keep if female==0
+csdid phy_act1 female indigenous married educ* [iw=weight], time(cohort) gvar(fist_cohort) method(dripw) wboot vce(cluster geo)
+estat event, window(-6 8) estore(comm_men)
+snapshot restore 1
 
 coefplot ///
-(women, label("Women") msymbol(O) mcolor(gs14) ciopt(lc(gs14) recast(rcap))) ///
-(men, label("Men") msymbol(O) mcolor(dknavy) ciopt(lc(dknavy) recast(rcap))) ///
-, vertical keep(treat*) yline(0) omitted baselevels ///
+(comm_women, label("Women") msymbol(O) mcolor(gs14) ciopt(lc(gs14) recast(rcap))) ///
+(comm_men, label("Men") msymbol(O) mcolor(dknavy) ciopt(lc(dknavy) recast(rcap))) ///
+, vertical yline(0) omitted baselevels ///
 xline(9, lstyle(grid) lpattern(dash) lcolor(ltblue)) ///
 ytitle("Likelihood of working in communication-intensive jobs", size(medium) height(5)) ///
 ylabel(-.8(.4).8, labs(medium) grid format(%5.2f)) ///
