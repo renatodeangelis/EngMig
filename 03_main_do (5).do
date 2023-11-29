@@ -6,8 +6,8 @@
 clear
 set more off
 gl data= "https://raw.githubusercontent.com/galvez-soriano/Papers/main/ReturnsEng/Data"
-gl base= "C:\Users\Oscar Galvez Soriano\Documents\Papers\ReturnsEng\Data"
-gl doc= "C:\Users\Oscar Galvez Soriano\Documents\Papers\ReturnsEng\Doc"
+gl base= "C:\Users\rdeangelis\OneDrive - The University of Chicago"
+gl doc= "C:\Users\rdeangelis\OneDrive - The University of Chicago"
 *========================================================================*
 /* FIGURE 5: Effect of English instruction on occupational decisions */
 *========================================================================*
