@@ -416,6 +416,9 @@ graph export "$doc\histo_occup.png", replace
 
 gen phy_act1=phy_act_s>=75 & phy_act_s!=.
 gen comm1 = communica_s>=75 & communica_s!=.
+gen analy1 = analy_s>=75 & analy_s!=.
+gen mach1 = mach_s>=75 & mach_s!=.
+gen doc1 = doc_s>=75 & doc_s!=.
 
 snapshot save, label(snapshot1)
 keep if paidw==1
@@ -557,3 +560,196 @@ graphregion(color(white)) scheme(s2mono) ciopts(recast(rcap)) ///
 legend( pos(8) ring(0) col(1) region(lcolor(white)) size(medium)) ///
 ysc(r(-1 1)) levels(90) 
 graph export "$doc\PTA_SDD_CommunicaOccup_Gender.png", replace
+
+*========================================================================*
+csdid analy1 female indigenous married educ* [iw=weight], time(cohort) gvar(fist_cohort) method(dripw) wboot vce(cluster geo)
+estat event, window(-6 8) estore(analy)
+coefplot analy, vertical yline(0) drop(Pre_avg Post_avg) omitted baselevels ///
+xline(9, lstyle(grid) lpattern(dash) lcolor(ltblue)) ///
+ytitle("Likelihood of working in analysis-intensive jobs", size(medium) height(5)) ///
+ylabel(-1(0.25).5, labs(medium) grid format(%5.2f)) ///
+xtitle("Cohorts since policy intervention", size(medium) height(5)) ///
+xlabel(, angle(vertical) labs(medium)) ///
+graphregion(color(white)) scheme(s2mono) ciopts(recast(rcap)) ///
+ysc(r(-1 .5)) recast(connected)
+graph export "$doc\PTA_SDD_AnalysisOccup.png", replace
+
+snapshot save, label(snapshot1)
+keep if edu<=9
+csdid analy1 female indigenous married educ* [iw=weight], time(cohort) gvar(fist_cohort) method(dripw) wboot vce(cluster geo)
+estat event, window(-6 8) estore(analy_low)
+snapshot restore 1
+
+snapshot save, label(snapshot1)
+keep if edu>9
+csdid analy1 female indigenous married educ* [iw=weight], time(cohort) gvar(fist_cohort) method(dripw) wboot vce(cluster geo)
+estat event, window(-6 8) estore(analy_high)
+snapshot restore 1
+
+coefplot ///
+(analy_low, label("Low-Educational Achievement") msymbol(O) mcolor(gs14) ciopt(lc(gs14) recast(rcap))) ///
+(analy_high, label("High-Educational Achievement") msymbol(O) mcolor(dknavy) ciopt(lc(dknavy) recast(rcap))) ///
+, vertical yline(0) drop(Pre_avg Post_avg) omitted baselevels ///
+xline(9, lstyle(grid) lpattern(dash) lcolor(ltblue)) ///
+ytitle("Likelihood of working in analysis-intensive jobs", size(medium) height(5)) ///
+ylabel(-.8(.4).8, labs(medium) grid format(%5.2f)) ///
+xtitle("Cohorts since policy intervention", size(medium) height(5)) ///
+xlabel(, angle(vertical) labs(medium)) ///
+graphregion(color(white)) scheme(s2mono) ciopts(recast(rcap)) ///
+legend( pos(8) ring(0) col(1) region(lcolor(white)) size(medium)) ///
+ysc(r(-.8 .8)) levels(90) 
+graph export "$doc\PTA_SDD_AnalysisOccup_Educa.png", replace
+
+snapshot save, label(snapshot1)
+keep if female==1
+csdid analy1 female indigenous married educ* [iw=weight], time(cohort) gvar(fist_cohort) method(dripw) wboot vce(cluster geo)
+estat event, window(-6 8) estore(analy_women)
+snapshot restore 1
+
+snapshot save, label(snapshot1)
+keep if female==0
+csdid analy1 female indigenous married educ* [iw=weight], time(cohort) gvar(fist_cohort) method(dripw) wboot vce(cluster geo)
+estat event, window(-6 8) estore(analy_men)
+snapshot restore 1
+
+coefplot ///
+(analy_women, label("Women") msymbol(O) mcolor(gs14) ciopt(lc(gs14) recast(rcap))) ///
+(analy_men, label("Men") msymbol(O) mcolor(dknavy) ciopt(lc(dknavy) recast(rcap))) ///
+, vertical yline(0) drop(Pre_avg Post_avg) omitted baselevels ///
+xline(9, lstyle(grid) lpattern(dash) lcolor(ltblue)) ///
+ytitle("Likelihood of working in analysis-intensive jobs", size(medium) height(5)) ///
+ylabel(-1(0.25)1, labs(medium) grid format(%5.2f)) ///
+xtitle("Cohorts since policy intervention", size(medium) height(5)) ///
+xlabel(, angle(vertical) labs(medium)) ///
+graphregion(color(white)) scheme(s2mono) ciopts(recast(rcap)) ///
+legend( pos(8) ring(0) col(1) region(lcolor(white)) size(medium)) ///
+ysc(r(-1 1)) levels(90) 
+graph export "$doc\PTA_SDD_AnalysisOccup_Gender.png", replace
+*========================================================================*
+csdid mach1 female indigenous married educ* [iw=weight], time(cohort) gvar(fist_cohort) method(dripw) wboot vce(cluster geo)
+estat event, window(-6 8) estore(mach)
+coefplot mach, vertical yline(0) drop(Pre_avg Post_avg) omitted baselevels ///
+xline(9, lstyle(grid) lpattern(dash) lcolor(ltblue)) ///
+ytitle("Likelihood of working in machine-intensive jobs", size(medium) height(5)) ///
+ylabel(-1(0.25).5, labs(medium) grid format(%5.2f)) ///
+xtitle("Cohorts since policy intervention", size(medium) height(5)) ///
+xlabel(, angle(vertical) labs(medium)) ///
+graphregion(color(white)) scheme(s2mono) ciopts(recast(rcap)) ///
+ysc(r(-1 .5)) recast(connected)
+graph export "$doc\PTA_SDD_MachOccup.png", replace
+
+snapshot save, label(snapshot1)
+keep if edu<=9
+csdid mach1 female indigenous married educ* [iw=weight], time(cohort) gvar(fist_cohort) method(dripw) wboot vce(cluster geo)
+estat event, window(-6 8) estore(mach_low)
+snapshot restore 1
+
+snapshot save, label(snapshot1)
+keep if edu>9
+csdid mach1 female indigenous married educ* [iw=weight], time(cohort) gvar(fist_cohort) method(dripw) wboot vce(cluster geo)
+estat event, window(-6 8) estore(mach_high)
+snapshot restore 1
+
+coefplot ///
+(mach_low, label("Low-Educational Achievement") msymbol(O) mcolor(gs14) ciopt(lc(gs14) recast(rcap))) ///
+(mach_high, label("High-Educational Achievement") msymbol(O) mcolor(dknavy) ciopt(lc(dknavy) recast(rcap))) ///
+, vertical yline(0) drop(Pre_avg Post_avg) omitted baselevels ///
+xline(9, lstyle(grid) lpattern(dash) lcolor(ltblue)) ///
+ytitle("Likelihood of working in machine-intensive jobs", size(medium) height(5)) ///
+ylabel(-.8(.4).8, labs(medium) grid format(%5.2f)) ///
+xtitle("Cohorts since policy intervention", size(medium) height(5)) ///
+xlabel(, angle(vertical) labs(medium)) ///
+graphregion(color(white)) scheme(s2mono) ciopts(recast(rcap)) ///
+legend( pos(8) ring(0) col(1) region(lcolor(white)) size(medium)) ///
+ysc(r(-.8 .8)) levels(90) 
+graph export "$doc\PTA_SDD_MachOccup_Educa.png", replace
+
+snapshot save, label(snapshot1)
+keep if female==1
+csdid mach1 female indigenous married educ* [iw=weight], time(cohort) gvar(fist_cohort) method(dripw) wboot vce(cluster geo)
+estat event, window(-6 8) estore(mach_women)
+snapshot restore 1
+
+snapshot save, label(snapshot1)
+keep if female==0
+csdid mach1 female indigenous married educ* [iw=weight], time(cohort) gvar(fist_cohort) method(dripw) wboot vce(cluster geo)
+estat event, window(-6 8) estore(mach_men)
+snapshot restore 1
+
+coefplot ///
+(mach_women, label("Women") msymbol(O) mcolor(gs14) ciopt(lc(gs14) recast(rcap))) ///
+(mach_men, label("Men") msymbol(O) mcolor(dknavy) ciopt(lc(dknavy) recast(rcap))) ///
+, vertical yline(0) drop(Pre_avg Post_avg) omitted baselevels ///
+xline(9, lstyle(grid) lpattern(dash) lcolor(ltblue)) ///
+ytitle("Likelihood of working in machine-intensive jobs", size(medium) height(5)) ///
+ylabel(-1(0.25)1, labs(medium) grid format(%5.2f)) ///
+xtitle("Cohorts since policy intervention", size(medium) height(5)) ///
+xlabel(, angle(vertical) labs(medium)) ///
+graphregion(color(white)) scheme(s2mono) ciopts(recast(rcap)) ///
+legend( pos(8) ring(0) col(1) region(lcolor(white)) size(medium)) ///
+ysc(r(-1 1)) levels(90) 
+graph export "$doc\PTA_SDD_MachOccup_Gender.png", replace
+*========================================================================*
+csdid doc1 female indigenous married educ* [iw=weight], time(cohort) gvar(fist_cohort) method(dripw) wboot vce(cluster geo)
+estat event, window(-6 8) estore(doc)
+coefplot doc, vertical yline(0) drop(Pre_avg Post_avg) omitted baselevels ///
+xline(9, lstyle(grid) lpattern(dash) lcolor(ltblue)) ///
+ytitle("Likelihood of working in document-intensive jobs", size(medium) height(5)) ///
+ylabel(-1(0.25).5, labs(medium) grid format(%5.2f)) ///
+xtitle("Cohorts since policy intervention", size(medium) height(5)) ///
+xlabel(, angle(vertical) labs(medium)) ///
+graphregion(color(white)) scheme(s2mono) ciopts(recast(rcap)) ///
+ysc(r(-1 .5)) recast(connected)
+graph export "$doc\PTA_SDD_DOcOccup.png", replace
+
+snapshot save, label(snapshot1)
+keep if edu<=9
+csdid doc1 female indigenous married educ* [iw=weight], time(cohort) gvar(fist_cohort) method(dripw) wboot vce(cluster geo)
+estat event, window(-6 8) estore(doc_low)
+snapshot restore 1
+
+snapshot save, label(snapshot1)
+keep if edu>9
+csdid doc1 female indigenous married educ* [iw=weight], time(cohort) gvar(fist_cohort) method(dripw) wboot vce(cluster geo)
+estat event, window(-6 8) estore(doc_high)
+snapshot restore 1
+
+coefplot ///
+(doc_low, label("Low-Educational Achievement") msymbol(O) mcolor(gs14) ciopt(lc(gs14) recast(rcap))) ///
+(doc_high, label("High-Educational Achievement") msymbol(O) mcolor(dknavy) ciopt(lc(dknavy) recast(rcap))) ///
+, vertical yline(0) drop(Pre_avg Post_avg) omitted baselevels ///
+xline(9, lstyle(grid) lpattern(dash) lcolor(ltblue)) ///
+ytitle("Likelihood of working in document-intensive jobs", size(medium) height(5)) ///
+ylabel(-.8(.4).8, labs(medium) grid format(%5.2f)) ///
+xtitle("Cohorts since policy intervention", size(medium) height(5)) ///
+xlabel(, angle(vertical) labs(medium)) ///
+graphregion(color(white)) scheme(s2mono) ciopts(recast(rcap)) ///
+legend( pos(8) ring(0) col(1) region(lcolor(white)) size(medium)) ///
+ysc(r(-.8 .8)) levels(90) 
+graph export "$doc\PTA_SDD_DocOccup_Educa.png", replace
+
+snapshot save, label(snapshot1)
+keep if female==1
+csdid doc1 female indigenous married educ* [iw=weight], time(cohort) gvar(fist_cohort) method(dripw) wboot vce(cluster geo)
+estat event, window(-6 8) estore(doc_women)
+snapshot restore 1
+
+snapshot save, label(snapshot1)
+keep if female==0
+csdid doc1 female indigenous married educ* [iw=weight], time(cohort) gvar(fist_cohort) method(dripw) wboot vce(cluster geo)
+estat event, window(-6 8) estore(doc_men)
+snapshot restore 1
+
+coefplot ///
+(doc_women, label("Women") msymbol(O) mcolor(gs14) ciopt(lc(gs14) recast(rcap))) ///
+(doc_men, label("Men") msymbol(O) mcolor(dknavy) ciopt(lc(dknavy) recast(rcap))) ///
+, vertical yline(0) drop(Pre_avg Post_avg) omitted baselevels ///
+xline(9, lstyle(grid) lpattern(dash) lcolor(ltblue)) ///
+ytitle("Likelihood of working in document-intensive jobs", size(medium) height(5)) ///
+ylabel(-1(0.25)1, labs(medium) grid format(%5.2f)) ///
+xtitle("Cohorts since policy intervention", size(medium) height(5)) ///
+xlabel(, angle(vertical) labs(medium)) ///
+graphregion(color(white)) scheme(s2mono) ciopts(recast(rcap)) ///
+legend( pos(8) ring(0) col(1) region(lcolor(white)) size(medium)) ///
+ysc(r(-1 1)) levels(90) 
+graph export "$doc\PTA_SDD_DocOccup_Gender.png", replace
