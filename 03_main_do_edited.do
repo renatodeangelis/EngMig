@@ -1,8 +1,6 @@
 *========================================================================*
 /* English skills and labor market outcomes in Mexico */
 *========================================================================*
-/* Author: Oscar Galvez-Soriano */
-*========================================================================*
 clear
 set more off
 gl data= "https://raw.githubusercontent.com/galvez-soriano/Papers/main/ReturnsEng/Data"
@@ -11,6 +9,23 @@ gl doc= "C:\Users\rdeangelis\OneDrive - The University of Chicago"
 *========================================================================*
 /* TABLE 4. Effect of English programs (staggered DiD) */
 *========================================================================*
+/* This code uses staggered difference-in-difference to estimate the effect of
+the enactment of an English instruction policy in Mexico during the early 1990s 
+on four principal outcomes: weekly hours of English instruction, probability of 
+speaking English, log wages, and probability of employment. The program was
+implemented only in certain Mexican states, those states began implementation
+in different years, and within those states, certain localities either implemented
+the policy some time after the state began implementation, or failed to implement it
+altogether. 
+
+This code presents three ways of approaching these heterogeneities. The first only
+differentiates between adopter states and non-adopter states. The second exploits
+locality by cohort variations by including only those locality-years where the program
+was implemented in the treatment cohort and including the rest in the non-treatment cohort.
+The third refines this nuance and excludes the localities that didn't immediately implement 
+the program from the analysis altogether. 
+*/
+
 use "$data/eng_abil.dta", clear
 keep if biare==1
 keep if state=="01" | state=="05" | state=="10" ///
