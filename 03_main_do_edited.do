@@ -7,6 +7,33 @@ gl data= "https://raw.githubusercontent.com/galvez-soriano/Papers/main/ReturnsEn
 gl base= "C:\Users\rdeangelis\OneDrive - The University of Chicago"
 gl doc= "C:\Users\rdeangelis\OneDrive - The University of Chicago"
 *========================================================================*
+Interpolation
+*========================================================================*
+/* */
+use "$base\exposure_loc.dta", clear
+sort geo year
+gen state=substr(geo,1,2)
+gen hrs_exp0=hrs_exp
+
+forval i = 1/17 {
+    gen next_year_hrs_exp = hrs_exp[_n+1]
+    replace hrs_exp = 0 if next_year_hrs_exp == 0 & !missing(next_year_hrs_exp) & year < year[_n+1]
+    drop next_year_hrs_exp
+}
+
+gen interpolated_hrs_exp = (hrs_exp[_n-1] + hrs_exp[_n+1])/2
+
+replace hrs_exp = interpolated_hrs_exp if missing(hrs_exp) & !missing(hrs_exp[_n-1]) & !missing(hrs_exp[_n+1]) & year > year[_n-1] & year < year[_n+1]
+
+drop interpolated_hrs_exp
+
+bysort state cohort: egen hrs_eng=mean(hrs_exp)
+label var hrs_eng "Extrapolated"
+bysort state cohort: egen hrs_eng0=mean(hrs_exp0)
+label var hrs_eng0 "With missings"
+
+save "$base\exposure_loc.dta", replace
+*========================================================================*
 /* TABLE 4. Effect of English programs (staggered DiD) */
 *========================================================================*
 /* This code uses staggered difference-in-difference to estimate the effect of
