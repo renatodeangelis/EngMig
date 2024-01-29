@@ -7,7 +7,7 @@ gl data= "https://raw.githubusercontent.com/galvez-soriano/Papers/main/ReturnsEn
 gl base= "C:\Users\rdeangelis\OneDrive - The University of Chicago"
 gl doc= "C:\Users\rdeangelis\OneDrive - The University of Chicago"
 *========================================================================*
-Interpolation
+/* Interpolation */
 *========================================================================*
 /* */
 use "$base\exposure_loc.dta", clear
