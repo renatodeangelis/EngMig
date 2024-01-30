@@ -9,18 +9,21 @@ gl doc= "C:\Users\rdeangelis\OneDrive - The University of Chicago"
 *========================================================================*
 /* Interpolation */
 *========================================================================*
-/* */
+/* This portion of the code seeks to interpolate missing values for hours of English language instruction. */
 use "$base\exposure_loc.dta", clear
 sort geo year
 gen state=substr(geo,1,2)
 gen hrs_exp0=hrs_exp
 
+/* When hours experienced for a given locality are 0 in a year, interpolate 0 for all previous years */
 forval i = 1/17 {
     gen next_year_hrs_exp = hrs_exp[_n+1]
     replace hrs_exp = 0 if next_year_hrs_exp == 0 & !missing(next_year_hrs_exp) & year < year[_n+1]
     drop next_year_hrs_exp
 }
 
+/* When hours experienced for a given locality is missing, but the previous and succeeding year have values,
+interpolate the average of the two values */
 gen interpolated_hrs_exp = (hrs_exp[_n-1] + hrs_exp[_n+1])/2
 
 replace hrs_exp = interpolated_hrs_exp if missing(hrs_exp) & !missing(hrs_exp[_n-1]) & !missing(hrs_exp[_n+1]) & year > year[_n-1] & year < year[_n+1]
